@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Potato Stock Market</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+    <body>
+        <h1> Potato Stock Market</h1>
+        <div id="chartWrapper">
+            <canvas id="priceChart"></canvas>
+        </div>
+        <div id="market">
+            <p>Current Price: <span id="price">$2.50</span></p>
+            <p>Cash: <span id="cash">$1000.00</span></p>
+            <p>Potatoes Owned: <span id="potatoes">0</span></p>
+            <p>News: <span id="news"></span></p>
+            <p>Turns not selling: <span id="turns">0</span></p>
+            <div id="actions">
+                <button onclick="buyPotato()">Buy 1🥔</button>
+                <button onclick="buyTenPotatoes()">Buy 10🥔</button>
+                <button onclick="buyHundredPotatoes()">Buy 100🥔</button>
+                <button onclick="sellPotato()">Sell 1🥔</button>
+                <button onclick="sellTenPotatoes()">Sell 10🥔</button>
+                <button onclick="sellHundredPotatoes()">Sell 100🥔</button>
+                <button onclick="sellAll()">Sell all🥔</button>
+            </div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
