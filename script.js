@@ -7,41 +7,55 @@ let currentTime = 0;
 let trend = 0;
 let percentageChangeBool = false;
 let turns = 0;
-let turnBool = false;
 
 const priceElement = document.getElementById("price");
 const cashElement = document.getElementById("cash");
 const potatoesElement = document.getElementById("potatoes");
 const newsElement = document.getElementById("news");
 const turnsElement = document.getElementById("turns");
+const tickerMove = document.querySelector(".ticker-move");
+const potatoBtn = document.getElementsByClassName("potatoBtn");
+
+const buyOneEl = document.getElementById("buyOne");
+const buyTenEl = document.getElementById("buyTen");
+const buyHundredEl = document.getElementById("buyHundred");
+const sellOneEl = document.getElementById("sellOne");
+const sellTenEl = document.getElementById("sellTen");
+const sellHundredEl = document.getElementById("sellHundred");
+const sellAllEl = document.getElementById("sellAll");
 
 const ctx = document.getElementById("priceChart").getContext("2d");
-
+Chart.defaults.font.family = "'Hachi Maru Pop', sans-serif";
 const chart = new Chart(ctx, {
     type: "line",
     data: {
         labels: timeLabels,
         datasets: [{
             data: priceHistory,
-            borderColor: "rgba(255, 165, 0 , 1)",
-            backgroundColor: "rgba(255, 165, 0, 0.2",
+            borderColor: "rgba(255, 165, 0, 1)",
+            backgroundColor: "rgba(255, 165, 0, 0.2)",
             tension: 0.1
         }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: true,
+        plugins: {
+            legend: {
+            display: false
+            }
+        },
         scales: {
             y: {
                 title: {
                     display: true,
-                    text: "Price ($)"
+                    text: "Price ($)",
                 },
                 min: 0
-            }
+            },
         }
     }
-})
+});
 
 function updateDisplayData() {
     priceElement.textContent = `$${price.toFixed(2)}`;
@@ -75,12 +89,18 @@ const potatoMarketHeadlines = [
 
 function randomNews() {
     const news = potatoMarketHeadlines[Math.floor(Math.random() * potatoMarketHeadlines.length)];
+
+    // Reset animation on the scrolling container
+    tickerMove.style.animation = "none";
+    void tickerMove.offsetWidth;
     newsElement.textContent = news.headline;
+    tickerMove.style.animation = "ticker 12s linear infinite";
+
     return news;
 }
 
 function updatePrice() {
-    if (turnBool == true) {
+    if (potatoes != 0) {
         turns++;
     }
     if (potatoes > 100 && turns > 30) {
@@ -133,7 +153,7 @@ function buyPotato() {
         potatoes++;
         cash -= price;
         updateDisplayData();
-        turnBool = true;
+        UpdateButton();
     } else {
         alert("Not enough cash");
     }
@@ -144,7 +164,7 @@ function buyTenPotatoes() {
         potatoes+= 10;
         cash -= price*10;
         updateDisplayData();
-        turnBool = true;
+        UpdateButton();
     } else {
         alert("Not enough cash");
     }
@@ -155,7 +175,7 @@ function buyHundredPotatoes() {
         potatoes+= 100;
         cash -= price*100;
         updateDisplayData();
-        turnBool = true;
+        UpdateButton();
     } else {
         alert("Not enough cash");
     }
@@ -167,7 +187,8 @@ function sellPotato() {
         potatoes--;
         cash += price;
         updateDisplayData();
-        turnsBool = false;
+        potatoShower(1);
+        UpdateButton();
     } else {
         alert("Not enough potatoes");
     }
@@ -179,7 +200,8 @@ function sellTenPotatoes() {
         potatoes-= 10;
         cash += price*10;
         updateDisplayData();
-        turnsBool = false;
+        potatoShower(10);
+        UpdateButton();
     } else {
         alert("Not enough potatoes");
     }
@@ -191,7 +213,8 @@ function sellHundredPotatoes() {
         potatoes-= 100;
         cash += price*100;
         updateDisplayData();
-        turnsBool = false;
+        potatoShower(100);
+        UpdateButton();
     } else {
         alert("Not enough potatoes");
     }
@@ -201,14 +224,56 @@ function sellAll() {
     if(potatoes > 0) {
         turns = 0;
         cash += potatoes * price;
+        potatoShower(potatoes);
         potatoes = 0;
         updateDisplayData();
-        turnsBool = false;
+        UpdateButton();
     } else {
         alert("You have no potatoes");
     }
 }
 
+function UpdateButton() {
+    const buyButtons = [buyOneEl, buyTenEl, buyHundredEl];
+
+    if (cash < price) {
+        buyButtons.forEach(btn => setButtonState(btn, false));
+    } else if (cash < price * 10) {
+        setButtonState(buyOneEl, true);
+        [buyTenEl, buyHundredEl].forEach(btn => setButtonState(btn, false));
+    } else if (cash < price * 100) {
+        [buyOneEl, buyTenEl].forEach(btn => setButtonState(btn, true));
+        setButtonState(buyHundredEl, false);
+    } else {
+        buyButtons.forEach(btn => setButtonState(btn, true));
+    }
+
+    const sellButtons = [sellOneEl, sellTenEl, sellHundredEl, sellAllEl];
+
+    if (potatoes == 0) {
+        sellButtons.forEach(btn => setButtonState(btn, false));
+    } else if (potatoes < 10) {
+        [sellOneEl, sellAllEl].forEach(btn => setButtonState(btn, true));
+        [sellTenEl, sellHundredEl].forEach(btn => setButtonState(btn, false));
+    } else if (potatoes < 100) {
+        [sellOneEl, sellTenEl, sellAllEl].forEach(btn => setButtonState(btn, true));
+        setButtonState(sellHundredEl, false);
+    } else {
+        sellButtons.forEach(btn => setButtonState(btn, true));
+    }
+}
+
+function setButtonState(button, enabled) {
+    button.disabled = !enabled;
+
+    if (enabled) {
+        button.classList.remove("!bg-gray-300", "text-gray-500", "cursor-not-allowed", "opacity-70");
+    } else {
+        button.classList.add("!bg-gray-300", "text-gray-500", "cursor-not-allowed", "opacity-70");
+    }
+}
+
+UpdateButton()
 // automatic price update
 setInterval(updatePrice, 2000)
 
