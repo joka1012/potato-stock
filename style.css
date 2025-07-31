@@ -102,3 +102,14 @@ button {
   padding: 0px 20px;
   box-sizing: border-box;
 }
+
+.header-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+#saveButton {
+  height: auto;
+}

@@ -24,6 +24,30 @@ const sellTenEl = document.getElementById("sellTen");
 const sellHundredEl = document.getElementById("sellHundred");
 const sellAllEl = document.getElementById("sellAll");
 
+function loadProgressFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const saveData = params.get("save");
+
+  if (saveData) {
+    try {
+      const progress = JSON.parse(atob(saveData));
+      console.log("Loaded progress:", progress);
+      return progress;
+    } catch (e) {
+      console.error("Invalid save data");
+    }
+  }
+
+  return null;
+}
+
+const savedProgress = loadProgressFromURL();
+if (savedProgress) {
+  cash = savedProgress.money;
+  potatoes = savedProgress.potatoAmt;
+  price = savedProgress.priceNow;
+}
+
 const ctx = document.getElementById("priceChart").getContext("2d");
 Chart.defaults.font.family = "'Hachi Maru Pop', sans-serif";
 const chart = new Chart(ctx, {
@@ -147,6 +171,20 @@ function updatePrice() {
 }
 
 //-------------Buttons------------------
+
+function generateSaveLink() {
+    const progress = { money: cash, potatoAmt: potatoes, priceNow: price};
+  const encoded = btoa(JSON.stringify(progress));
+  const shareableURL = `${location.origin}${location.pathname}?save=${encoded}`;
+  copyToClipboard(shareableURL);
+  return shareableURL;
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Save link copied!");
+  });
+}
 
 function buyPotato() {
     if(cash >= price) {
