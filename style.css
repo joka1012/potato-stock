@@ -106,10 +106,10 @@ button {
 .header-box {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-between; 
   gap: 20px;
 }
 
-#saveButton {
+#openLoginPopupButton {
   height: auto;
 }
