@@ -1,6 +1,6 @@
 import { getLoginStatus } from "./login.js";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://userservice-g9np.onrender.com";
 
 let price = 2.5;
 let cash = 1000;
