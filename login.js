@@ -1,4 +1,5 @@
 let isLoggedIn = false;
+const BASE_URL = "https://userservice-g9np.onrender.com";
 
 function updateAuthButton(button, popup) {
   const token = localStorage.getItem("token");
@@ -75,7 +76,7 @@ export function setupPopup(openBtnId) {
     console.log("Passwort:", password);
 
     // Hier könntest du die Daten an den Server schicken
-    fetch("http://localhost:3000/auth/register", {
+    fetch(`${BASE_URL}/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -118,7 +119,7 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
   console.log("Passwort:", password);
 
   // Hier könntest du die Daten an den Server schicken
-  fetch("http://localhost:3000/auth/login", {
+  fetch(`${BASE_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
