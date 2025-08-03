@@ -5,16 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Potato Stock Market</title>
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="login-popup.css" />
+    <link rel="stylesheet" href="login/login-popup.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Bitcount+Grid+Single:wght@100..900&family=Hachi+Maru+Pop&display=swap"
       rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
     <header class="header-box">
-      <h1 class="rock-3d-regular">Potato Stock Market</h1>
+      <h1 id="title" class="rock-3d-regular">Potato Stock Market</h1>
       <button id="openLoginPopupButton" class="potatoBtn">
         Login/Register
       </button>
@@ -35,35 +39,25 @@
         <p>Current Price: <span id="price">$2.50</span></p>
         <p>Cash: <span id="cash">$1000.00</span></p>
         <p>Potatoes Owned: <span id="potatoes">0</span></p>
-        <p>Turns not selling: <span id="turns">0</span></p>
+        <p>
+          Turns not selling: <span id="turns">0</span>
+          <i id="info-icon" class="bi bi-info-circle"
+            ><span id="tooltip" class="tooltip-text"
+              >Potatoes taxed 15% from turn 30<br />(based on current
+              price)</span
+            ></i
+          >
+        </p>
       </div>
     </div>
     <div id="actions">
-      <button id="buyOne" class="potatoBtn">
-        Buy 1🥔
-      </button>
-      <button id="buyTen" class="potatoBtn">
-        Buy 10🥔
-      </button>
-      <button id="buyHundred" class="potatoBtn">
-        Buy 100🥔
-      </button>
-      <button id="sellOne" class="potatoBtn">
-        Sell 1🥔
-      </button>
-      <button id="sellTen" class="potatoBtn">
-        Sell 10🥔
-      </button>
-      <button
-        id="sellHundred"
-        class="potatoBtn"
-        onclick="sellHundredPotatoes()"
-      >
-        Sell 100🥔
-      </button>
-      <button id="sellAll" class="potatoBtn">
-        Sell all🥔
-      </button>
+      <button id="buyOne" class="potatoBtn">Buy 1🥔</button>
+      <button id="buyTen" class="potatoBtn">Buy 10🥔</button>
+      <button id="buyHundred" class="potatoBtn">Buy 100🥔</button>
+      <button id="sellOne" class="potatoBtn">Sell 1🥔</button>
+      <button id="sellTen" class="potatoBtn">Sell 10🥔</button>
+      <button id="sellHundred" class="potatoBtn">Sell 100🥔</button>
+      <button id="sellAll" class="potatoBtn">Sell all🥔</button>
     </div>
     <script type="module" src="script.js"></script>
     <script src="potatoShower.js"></script>

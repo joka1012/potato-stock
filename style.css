@@ -17,7 +17,7 @@ html {
   font-family: "Hachi Maru Pop";
   font-weight: 600;
   overflow-x: hidden;
-  background-color: #FFFFF5;
+  background-color: #fffff5;
 }
 
 button {
@@ -79,7 +79,7 @@ button {
 @keyframes fall {
   to {
     transform: translateY(110vh) rotate(360deg);
-    opacity: 0.7;
+    opacity: 0.4;
   }
 }
 
@@ -88,6 +88,15 @@ button {
   padding: 5px;
   border-radius: 8%;
   font-weight: 500;
+  transition: background-color 0.2s, opacity 0.2s;
+  margin-bottom: 8px;
+}
+
+.potatoBtn:disabled {
+  background-color: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .mainContentWrapper {
@@ -101,15 +110,74 @@ button {
   min-width: 250px;
   padding: 0px 20px;
   box-sizing: border-box;
+  line-height: 1;
 }
 
 .header-box {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
+  justify-content: space-between;
   gap: 20px;
 }
 
 #openLoginPopupButton {
   height: auto;
+}
+
+#title {
+  font-size: 20px;
+}
+
+#info-icon {
+  position: relative;
+  cursor: pointer;
+}
+
+#info-icon .tooltip-text {
+  position: absolute;
+  top: 50%;
+  left: 110%;
+  background-color: #333;
+  transform: translateX(-70%);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+#info-icon:hover .tooltip-text {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#market span {
+  font-weight: 700;
+  font-size: 1.1em;
+}
+
+#market p {
+  font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  #title {
+    font-size: 32px;
+  }
+
+  .header-box {
+    margin: 0px 10px;
+  }
+
+  #info-icon .tooltip-text {
+    transform: translate(0%,-50%);
+  }
+
+  .mainContentItem {
+  line-height: normal;
+}
 }

@@ -1,5 +1,5 @@
 let isLoggedIn = false;
-const BASE_URL = "https://userservice-g9np.onrender.com";
+import { BASE_URL } from "../config.js";
 
 function updateAuthButton(button, popup) {
   const token = localStorage.getItem("token");

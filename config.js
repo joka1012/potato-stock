@@ -1,0 +1,1 @@
+export const BASE_URL = "https://userservice-g9np.onrender.com";

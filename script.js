@@ -1,16 +1,22 @@
-import { getLoginStatus } from "./login.js";
+import { getLoginStatus } from "./login/login.js";
 
-const BASE_URL = "https://userservice-g9np.onrender.com";
+// Set BASE_URL in .env for backend connection
+import { BASE_URL } from "./config.js";
 
+// Default ingame values
 let price = 2.5;
 let cash = 1000;
 let potatoes = 0;
 let priceHistory = [];
 let timeLabels = [];
 let currentTime = 0;
-let trend = 0;
 let percentageChangeBool = false;
 let turns = 0;
+// Variable for doubletouch zoom prevention
+let lastTouchEnd = 0;
+
+const infoIcon = document.getElementById('info-icon');
+const tooltip = document.getElementById('tooltip');
 
 const priceElement = document.getElementById("price");
 const cashElement = document.getElementById("cash");
@@ -28,18 +34,19 @@ const sellTenEl = document.getElementById("sellTen");
 const sellHundredEl = document.getElementById("sellHundred");
 const sellAllEl = document.getElementById("sellAll");
 
-// Popup HTML laden
-fetch("login-popup.html")
+// Load Popup HTML
+fetch("login/login-popup.html")
   .then((response) => response.text())
   .then((data) => {
     document.getElementById("popup-container").innerHTML = data;
 
-    // Popup-Setup ausführen, nachdem der HTML-Inhalt geladen ist
-    import("./login.js").then((module) => {
+    // Popup-Setup after HTML has been loaded
+    import("./login/login.js").then((module) => {
       module.setupPopup("openLoginPopupButton");
     });
   });
 
+// Save game in database
 async function saveGameState() {
   if (!getLoginStatus()) return;
   const token = localStorage.getItem("token");
@@ -66,6 +73,7 @@ async function saveGameState() {
   }
 }
 
+//Creates chart by chart.js
 const ctx = document.getElementById("priceChart").getContext("2d");
 Chart.defaults.font.family = "'Hachi Maru Pop', sans-serif";
 let chart = new Chart(ctx, {
@@ -101,6 +109,7 @@ let chart = new Chart(ctx, {
   },
 });
 
+// Create chart function for when the chart is destroyed after login/logout
 function createChart() {
   const ctx = document.getElementById("priceChart").getContext("2d");
   Chart.defaults.font.family = "'Hachi Maru Pop', sans-serif";
@@ -138,11 +147,37 @@ function createChart() {
   });
 }
 
+// Updates the text in the UI
 function updateDisplayData() {
   priceElement.textContent = `$${price.toFixed(2)}`;
   cashElement.textContent = `$${cash.toFixed(2)}`;
   potatoesElement.textContent = potatoes;
   turnsElement.textContent = turns;
+
+  if (price >= 2.5) {
+    priceElement.style.color = '#27ae60';
+  } else if (price < 2.5 && price >= 1) {
+    priceElement.style.color = '#f1c40f';
+  } else {
+    priceElement.style.color = '#e74c3c';
+  }
+  if (cash > 0) {
+    cashElement.style.color = '#27ae60';
+  } else if (cash < 0) {
+    cashElement.style.color = '#e74c3c';
+  } else {
+    cashElement.style.color = '#999999';
+  }
+  if (potatoes != 0) {
+    potatoesElement.style.color = '#e67e22';
+  }
+  if (turns > 20) {
+    turnsElement.style.color = '#e74c3c';
+  } else if (turns > 10) {
+    turnsElement.style.color = '#f1c40f';
+  } else {
+    turnsElement.style.color = '#27ae60';
+  }
 }
 
 const potatoMarketHeadlines = [
@@ -222,6 +257,7 @@ const potatoMarketHeadlines = [
   },
 ];
 
+// Chooses new headline
 function randomNews() {
   const news =
     potatoMarketHeadlines[
@@ -237,23 +273,25 @@ function randomNews() {
   return news;
 }
 
+// Determines price for next iteration
 function updatePrice() {
+  // Adds a turn for the hoarding tax
   if (potatoes != 0) {
     turns++;
   }
-  if (potatoes > 100 && turns > 30) {
+  // Taxation after 30 turns
+  if (turns > 30) {
     const tax = potatoes * price * 0.15; // 15% of hoarded value
     cash -= tax;
     turns = 0;
   }
-  if (turns > 30) {
-    turns = 0;
-  }
+  // Calculates change
   let change = (Math.random() - 0.5) * 1.5;
+  // Random jump/fall 10% of the time
   if (Math.random() < 0.1) {
     change += (Math.random() - 0.5) * 10;
   }
-
+  // 10% a time a new headline with a jump/fall
   if (Math.random() < 0.1) {
     const newChange = randomNews();
     if ((price < 1) & (newChange.change > 0)) {
@@ -273,6 +311,7 @@ function updatePrice() {
   price = Math.max(0.25, price);
   updateDisplayData();
 
+  // Pushes data onto chart
   currentTime++;
   timeLabels.push(currentTime);
   priceHistory.push(price.toFixed(2));
@@ -283,7 +322,7 @@ function updatePrice() {
   chart.update();
 }
 
-//-------------Buttons------------------
+//-------------Buying/Selling Buttons------------------
 
 function buyPotato() {
   if (cash >= price) {
@@ -320,8 +359,10 @@ function buyHundredPotatoes() {
 
 function sellPotato() {
   if (potatoes > 0) {
-    turns = 0;
     potatoes--;
+    if (potatoes == 0) {
+      turns = 0;
+    }
     cash += price;
     updateDisplayData();
     potatoShower(1);
@@ -333,8 +374,10 @@ function sellPotato() {
 
 function sellTenPotatoes() {
   if (potatoes >= 10) {
-    turns = 0;
     potatoes -= 10;
+    if (potatoes == 0) {
+      turns = 0;
+    }
     cash += price * 10;
     updateDisplayData();
     potatoShower(10);
@@ -346,8 +389,10 @@ function sellTenPotatoes() {
 
 function sellHundredPotatoes() {
   if (potatoes >= 100) {
-    turns = 0;
     potatoes -= 100;
+    if (potatoes == 0) {
+      turns = 0;
+    }
     cash += price * 100;
     updateDisplayData();
     potatoShower(100);
@@ -370,6 +415,7 @@ function sellAll() {
   }
 }
 
+// Logic for determining if button is clickable/not clickable
 function UpdateButton() {
   const buyButtons = [buyOneEl, buyTenEl, buyHundredEl];
 
@@ -402,35 +448,36 @@ function UpdateButton() {
   }
 }
 
+// If action is possile/not possile the button will be lighter/grey to signal clickable/not clickable
 function setButtonState(button, enabled) {
   button.disabled = !enabled;
-
-  if (enabled) {
-    button.classList.remove(
-      "!bg-gray-300",
-      "text-gray-500",
-      "cursor-not-allowed",
-      "opacity-70"
-    );
-  } else {
-    button.classList.add(
-      "!bg-gray-300",
-      "text-gray-500",
-      "cursor-not-allowed",
-      "opacity-70"
-    );
-  }
 }
 
+//---------------------------------Event listeners------------------------------------------------
+
+// Event listener for every action button. (By event listener because script is a module)
 document.getElementById("buyOne")?.addEventListener("click", buyPotato);
 document.getElementById("buyTen")?.addEventListener("click", buyTenPotatoes);
-document.getElementById("buyHundred")?.addEventListener("click", buyHundredPotatoes);
+document
+  .getElementById("buyHundred")
+  ?.addEventListener("click", buyHundredPotatoes);
 
 document.getElementById("sellOne")?.addEventListener("click", sellPotato);
 document.getElementById("sellTen")?.addEventListener("click", sellTenPotatoes);
-document.getElementById("sellHundred")?.addEventListener("click", sellHundredPotatoes);
+document
+  .getElementById("sellHundred")
+  ?.addEventListener("click", sellHundredPotatoes);
 document.getElementById("sellAll")?.addEventListener("click", sellAll);
 
+infoIcon.addEventListener("click", () => {
+  if (tooltip.style.display === "none") {
+    tooltip.style.display = "block";
+  } else {
+    tooltip.style.display = "none";
+  }
+});
+
+// After successful login get the game progress of the user and change the game variables accordingly. Restart chart.
 window.addEventListener("login-success", () => {
   console.log("Login erfolgreich – Spielstand laden oder AutoSave starten");
   const token = localStorage.getItem("token");
@@ -456,20 +503,34 @@ window.addEventListener("login-success", () => {
     .catch((error) => {
       console.error("Fehler:", error.message);
     });
-    updateDisplayData();
-    chart.destroy();
-    createChart();
+  updateDisplayData();
+  chart.destroy();
+  createChart();
 });
 
+// Prevents zooming by double tap onto a mobile screen. Allows fast buying and selling of potatoes.
+document.addEventListener(
+  "touchend",
+  function (event) {
+    const now = new Date().getTime();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  },
+  false
+);
+
+// If user log outs the game progress will be saved and reset to default and chart by chart.js will be destroyed and restarted.
 window.addEventListener("logout", () => {
-  console.log("Logout – Spiel zurücksetzen oder AutoSave stoppen");
+  console.log("Logout");
+  saveGameState();
   price = 2.5;
   cash = 1000;
   potatoes = 0;
   priceHistory = [];
   timeLabels = [];
   currentTime = 0;
-  trend = 0;
   percentageChangeBool = false;
   turns = 0;
   updateDisplayData();
@@ -477,15 +538,18 @@ window.addEventListener("logout", () => {
   createChart();
 });
 
+// After registration game progress will be saved
 window.addEventListener("register-success", () => {
-  console.log("Registrierung erfolgreich – ggf. Spiel initialisieren");
+  console.log("Registration successful");
   saveGameState();
 });
 
+// Save game progress before closing the site
 window.addEventListener("beforeunload", () => {
   saveGameState();
 });
 
+// Saving game progress every 15 seconds
 setInterval(() => {
   saveGameState();
 }, 15000);

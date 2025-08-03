@@ -1,0 +1,48 @@
+# Potato Stock Market
+
+Hello everyone, this is a potato stock market game in which you can buy and sell potatoes in order to make as much money as possible.
+
+## Inhaltsverzeichnis
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Kontakt](#kontakt)
+
+## Overview
+
+The price of the stock market is determined by a random function. Ocasionally the stock market experiences a huge jump/fall, based on the news headline.
+Visuallization of the price history is done by a graph by **chart.js**.
+
+After keeping potatoes for 30 turns, the user is subjected to a hoarding tax, which is 15% of the potatoes owned times the current price.
+
+The user can save the progress by creating a user. After registration the current progress is saved onto the users username and passwort.
+
+If a logged in user log outs, the game progress will be reset to the default setting of the cash=$1000 and potatoes=0.
+
+The log in feature is connected to backend service in which the user data is maintained. The login feature can be easily removed by deleting any reference to the login files in the **script.js** file.
+
+For the login feature to work, get the UserService backend service from my git repository (and set environment variables) and configure a MongoDB database connection.
+
+## Installation
+
+```bash
+# Beispiel für Node.js-Projekt
+git clone https://github.com/joka1012/potato-stock.git
+cd potato-stock
+npm install
+npm start
+```
+
+To make the login work: Create a config.js file with
+
+```
+export const BASE_URL = "https://YOUR_BACKEND_URL.com";
+```
+
+## Contact
+
+Kai Jones
+
+**Project link**: joka1012.github.io/potato-stock  
+**Homepage**: joka1012.github.io  
+**Email**: kaioliverjk@gmail.com
