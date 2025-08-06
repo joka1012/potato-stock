@@ -99,7 +99,7 @@ function changeButtonNature() {
 
     if (price < cash) {
       button.style.background = "#27ae60";
-      button.textContent = `Buy with ${price}`;
+      button.textContent = `Buy with ${button.dataset.pricestring}`;
       button.disabled = false;
 
       const purchaseHandler = () => {
