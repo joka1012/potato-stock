@@ -6,6 +6,7 @@
     <title>Potato Stock Market</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="login/login-popup.css" />
+    <link rel="stylesheet" href="shop/shop.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Bitcount+Grid+Single:wght@100..900&family=Hachi+Maru+Pop&display=swap"
       rel="stylesheet"
@@ -18,12 +19,16 @@
   </head>
   <body>
     <header class="header-box">
-      <h1 id="title" class="rock-3d-regular">Potato Stock Market</h1>
-      <button id="openLoginPopupButton" class="potatoBtn">
-        Login/Register
-      </button>
+      <h1 id="title">Potato Stock Market</h1>
+      <div id="header-button">
+        <button id="openShopPopupButton" class="potatoBtn">Shop</button>
+        <button id="openLoginPopupButton" class="potatoBtn">
+          Login/Register
+        </button>
+      </div>
     </header>
     <div id="popup-container"></div>
+    <div id="shop-container"></div>
     <div class="news-ticker">
       <div class="ticker-wrap">
         <div class="ticker-move">
@@ -60,6 +65,6 @@
       <button id="sellAll" class="potatoBtn">Sell all🥔</button>
     </div>
     <script type="module" src="script.js"></script>
-    <script src="potatoShower.js"></script>
+    <script type="module" src="potatoShower.js"></script>
   </body>
 </html>

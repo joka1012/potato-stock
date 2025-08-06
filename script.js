@@ -1,4 +1,6 @@
 import { getLoginStatus } from "./login/login.js";
+import { getActiveTheme } from "./shop/shop.js";
+import { potatoShower } from "./potatoShower.js";
 
 // Set BASE_URL in .env for backend connection
 import { BASE_URL } from "./config.js";
@@ -14,9 +16,10 @@ let percentageChangeBool = false;
 let turns = 0;
 // Variable for doubletouch zoom prevention
 let lastTouchEnd = 0;
+let activeTheme = "default";
 
-const infoIcon = document.getElementById('info-icon');
-const tooltip = document.getElementById('tooltip');
+const infoIcon = document.getElementById("info-icon");
+const tooltip = document.getElementById("tooltip");
 
 const priceElement = document.getElementById("price");
 const cashElement = document.getElementById("cash");
@@ -34,7 +37,7 @@ const sellTenEl = document.getElementById("sellTen");
 const sellHundredEl = document.getElementById("sellHundred");
 const sellAllEl = document.getElementById("sellAll");
 
-// Load Popup HTML
+// Load Login Popup HTML
 fetch("login/login-popup.html")
   .then((response) => response.text())
   .then((data) => {
@@ -43,6 +46,18 @@ fetch("login/login-popup.html")
     // Popup-Setup after HTML has been loaded
     import("./login/login.js").then((module) => {
       module.setupPopup("openLoginPopupButton");
+    });
+  });
+
+// Load Popup HTML
+fetch("shop/shop.html")
+  .then((response) => response.text())
+  .then((data) => {
+    document.getElementById("shop-container").innerHTML = data;
+
+    // Popup-Setup after HTML has been loaded
+    import("./shop/shop.js").then((module) => {
+      module.setupShopPopup("openShopPopupButton");
     });
   });
 
@@ -58,9 +73,11 @@ async function saveGameState() {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
+      price: price,
       cash: cash,
       potato: potatoes,
       turns: turns,
+      activeTheme: activeTheme,
     }),
   });
 
@@ -155,28 +172,28 @@ function updateDisplayData() {
   turnsElement.textContent = turns;
 
   if (price >= 2.5) {
-    priceElement.style.color = '#27ae60';
+    priceElement.style.color = "#27ae60";
   } else if (price < 2.5 && price >= 1) {
-    priceElement.style.color = '#f1c40f';
+    priceElement.style.color = "#f1c40f";
   } else {
-    priceElement.style.color = '#e74c3c';
+    priceElement.style.color = "#e74c3c";
   }
   if (cash > 0) {
-    cashElement.style.color = '#27ae60';
+    cashElement.style.color = "#27ae60";
   } else if (cash < 0) {
-    cashElement.style.color = '#e74c3c';
+    cashElement.style.color = "#e74c3c";
   } else {
-    cashElement.style.color = '#999999';
+    cashElement.style.color = "#999999";
   }
   if (potatoes != 0) {
-    potatoesElement.style.color = '#e67e22';
+    potatoesElement.style.color = "#e67e22";
   }
   if (turns > 20) {
-    turnsElement.style.color = '#e74c3c';
+    turnsElement.style.color = "#e74c3c";
   } else if (turns > 10) {
-    turnsElement.style.color = '#f1c40f';
+    turnsElement.style.color = "#f1c40f";
   } else {
-    turnsElement.style.color = '#27ae60';
+    turnsElement.style.color = "#27ae60";
   }
 }
 
@@ -499,6 +516,14 @@ window.addEventListener("login-success", () => {
       cash = data.cash;
       potatoes = data.potato;
       turns = data.turns;
+      const event = new CustomEvent("game-progress-loaded", {
+        detail: {
+          themes: data.themes,
+          activeTheme: data.activeTheme,
+        },
+      });
+
+      window.dispatchEvent(event);
     })
     .catch((error) => {
       console.error("Fehler:", error.message);
@@ -548,6 +573,22 @@ window.addEventListener("register-success", () => {
 window.addEventListener("beforeunload", () => {
   saveGameState();
 });
+
+window.addEventListener("new-active-theme", () => {
+  activeTheme = getActiveTheme();
+});
+
+export function getCash() {
+  return cash;
+}
+
+export function setCash(value) {
+  cash = value;
+}
+
+export function getLoadedTheme() {
+  activeTheme;
+}
 
 // Saving game progress every 15 seconds
 setInterval(() => {

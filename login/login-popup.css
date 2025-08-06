@@ -13,11 +13,13 @@
 
 .login-popup-content-wrapper {
   display: flex;
-  gap: 20px;
+  position: relative;
   border-radius: 10px;
   background: white;
+  color: black;
   align-items: center;
   padding: 20px;
+  flex-direction: column;
 }
 .login-popup-content {
   padding: 20px;
@@ -27,12 +29,25 @@
 }
 .close {
   position: absolute;
-  top: 10px;
+  top: 8px;
   right: 15px;
   font-size: 20px;
   cursor: pointer;
+  padding: 0px 10px;
+  z-index: 15;
+  color: black;
 }
 
-.login-popup-content:first-child {
-  border-right: 3px dotted #000000;
+.login-popup-content:first-of-type {
+  border-bottom: 3px dotted #000000;
+}
+
+@media (min-width: 768px) {
+  .login-popup-content-wrapper {
+    flex-direction: row;
+  }
+  .login-popup-content:first-of-type {
+    border-right: 3px dotted #000000;
+    border-bottom: none;
+  }
 }
