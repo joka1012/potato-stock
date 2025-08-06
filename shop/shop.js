@@ -1,6 +1,6 @@
 import { getLoginStatus } from "../login/login.js";
 import { BASE_URL } from "../config.js";
-import { getCash, setCash, getLoadedTheme } from "../script.js";
+import { getCash, setCash } from "../script.js";
 
 let activeTheme = "default";
 
@@ -26,6 +26,7 @@ function changeActiveTheme(themeName) {
   // Visuelles Feedback
   document.querySelectorAll(".owned").forEach((btn) => {
     btn.textContent = "Owned";
+    btn.style.background = "#27ae60";
   });
   console.log("themeName:", themeName);
   const button = document.querySelector(`div[data-theme="${themeName}"]`);
@@ -45,13 +46,15 @@ function changeOwnedStatus(themes) {
   });
 }
 
+function handleThemeClick(event) {
+  const themeName = event.currentTarget.dataset.theme;
+  changeActiveTheme(themeName);
+}
+
 function listenThemeChange() {
-  // ButtonListener for Theme change
   document.querySelectorAll(".owned").forEach((button) => {
-    button.addEventListener("click", () => {
-      const themeName = button.dataset.theme;
-      changeActiveTheme(themeName);
-    });
+    button.removeEventListener("click", handleThemeClick);
+    button.addEventListener("click", handleThemeClick);
   });
 }
 
@@ -82,6 +85,8 @@ async function unlockTheme(theme) {
   } catch (error) {
     console.error("Fehler:", error.message);
   }
+
+  listenThemeChange();
 }
 
 function changeButtonNature() {
@@ -124,6 +129,7 @@ function changeButtonNature() {
       button._purchaseHandler = purchaseHandler;
       button.addEventListener("click", purchaseHandler);
     } else {
+      button.textContent = `$${button.dataset.price}`;
       button.style.background = "#e74c3c";
       button.disabled = true;
     }
@@ -167,6 +173,7 @@ export function setupShopPopup(openBtnId) {
     changeOwnedStatus(e.detail.themes);
     changeActiveTheme(e.detail.activeTheme);
     changeButtonNature();
+    listenThemeChange();
   });
 
   window.addEventListener('register-success', () => {
@@ -180,6 +187,10 @@ export function setupShopPopup(openBtnId) {
     const themeDefault = ["default"];
     changeOwnedStatus(themeDefault);
     changeActiveTheme("default");
+    document.querySelectorAll(".buy-theme").forEach((button) => {
+      button.removeEventListener("click", handleThemeClick);
+    });
+    listenThemeChange();
     changeButtonNature();
   });
 
